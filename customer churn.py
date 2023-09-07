@@ -117,6 +117,7 @@ synthetic_data.to_sql('customer_data', con=engine, if_exists='replace', index=Fa
 # close connection
 conn.close()
 print(synthetic_data)
+print("hi")
 
 
 
