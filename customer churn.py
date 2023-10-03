@@ -103,11 +103,11 @@ def analyze_sentiment(text):
     # Use the compound score to categorize sentiment
     compound_score = sentiment_scores['compound']
     if compound_score >= 0.05:
-        return 'Positive'
+        return 1
     elif compound_score <= -0.05:
-        return 'Negative'
+        return -1
     else:
-        return 'Neutral'
+        return 0
 
 # Apply sentiment analysis to customer feedback
 synthetic_data['sentiment_analysis'] = synthetic_data['customer_feedback'].apply(analyze_sentiment)
@@ -117,8 +117,20 @@ synthetic_data.to_sql('customer_data', con=engine, if_exists='replace', index=Fa
 # close connection
 conn.close()
 print(synthetic_data)
-print("hi")
 
+# Churn rate calculation
+total_cust_start = num_records
+customers_lost = len(synthetic_data[synthetic_data['sentiment_analysis'] <= -1])
 
+# Calculate churn rate
+churn_rate = (customers_lost / total_cust_start) * 100
 
+print(f"Total Customers at the Start: {total_cust_start}")
+print(f"Customers Lost: {customers_lost}")
+print(f"Churn Rate: {churn_rate:.2f}%")
 
+# Add churn rate to DataFrame
+synthetic_data['churn_rate'] = churn_rate
+
+# Display the updated DataFrame
+print(synthetic_data.head())
